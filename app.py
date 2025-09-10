@@ -40,6 +40,10 @@ def send_to_gchat(thread_name, ai_text):
     """
     Sends a message back to GChat asynchronously
     """
+    # Ensure ai_text is a string (fix for 'str' object has no attribute keys)
+    if not isinstance(ai_text, str):
+        ai_text = str(ai_text)
+
     space_id = thread_name.split("/")[1]
     url = f"https://chat.googleapis.com/v1/spaces/{space_id}/messages"
 
@@ -49,7 +53,7 @@ def send_to_gchat(thread_name, ai_text):
     }
 
     # Log payload
-    print(" Async GChat payload:", response_payload, flush=True)
+    print("Async GChat payload:", response_payload, flush=True)
 
     try:
         token = get_access_token()
@@ -57,10 +61,12 @@ def send_to_gchat(thread_name, ai_text):
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json"
         }
+        # requests.post expects a dict for json=...
         resp = requests.post(url, json=response_payload, headers=headers)
-        print(" Async GChat response status:", resp.status_code, resp.text, flush=True)
+        print("Async GChat response status:", resp.status_code, resp.text, flush=True)
     except Exception as e:
-        print(" Error sending to GChat:", e, flush=True)
+        print("Error sending to GChat:", e, flush=True)
+
 
 
 def get_ai_response(context_key, user_text):
