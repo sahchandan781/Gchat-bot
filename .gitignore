@@ -1,0 +1,11 @@
+# Secrets + env
+.env
+
+# Python cache / virtualenv
+__pycache__/
+*.pyc
+venv/
+.env.local
+
+# Misc
+*.sqlite3
