@@ -36,38 +36,58 @@ def get_access_token():
 
 
 
-def send_to_gchat(thread_name, ai_text):
+def send_to_gchat_debug(thread_name, ai_text):
     """
-    Sends a message back to GChat asynchronously
+    Debug version to isolate the 'str' object has no attribute 'keys' error
     """
-    # Ensure ai_text is a string
+    print("=== DEBUG START ===", flush=True)
+    print("thread_name type:", type(thread_name), "value:", thread_name, flush=True)
+    print(
+        "ai_text type:",
+        type(ai_text),
+        "value:",
+        repr(ai_text[:100]) + "..." if len(str(ai_text)) > 100 else repr(ai_text),
+        flush=True,
+    )
+
     if not isinstance(ai_text, str):
         ai_text = str(ai_text)
-
-    response_payload = {
-        "text": ai_text,
-        "thread": {"name": thread_name}
-    }
-
-    # Ensure payload is a dict (safeguard for Render environment)
-    if isinstance(response_payload, str):
-        response_payload = json.loads(response_payload)
+        print("Converted ai_text to string", flush=True)
 
     space_id = thread_name.split("/")[1]
     url = f"https://chat.googleapis.com/v1/spaces/{space_id}/messages"
+    print("URL:", url, flush=True)
 
-    print("Async GChat payload:", response_payload, flush=True)
+    response_payload = {
+        "text": ai_text,
+        "thread": {"name": thread_name},
+    }
+    print("response_payload created, type:", type(response_payload), flush=True)
 
     try:
+        print("Getting access token...", flush=True)
         token = get_access_token()
+        print("Token obtained successfully", flush=True)
+
         headers = {
             "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
+        print("Headers created", flush=True)
+
+        print("About to make POST request...", flush=True)
+        print("Payload being sent:", response_payload, flush=True)
+
         resp = requests.post(url, json=response_payload, headers=headers)
-        print("Async GChat response status:", resp.status_code, resp.text, flush=True)
+        print("POST request completed", flush=True)
+        print("Response status:", resp.status_code, resp.text, flush=True)
     except Exception as e:
-        print("Error sending to GChat:", e, flush=True)
+        print("Exception details:", type(e).__name__, str(e), flush=True)
+        import traceback
+        print("Full traceback:", traceback.format_exc(), flush=True)
+
+    print("=== DEBUG END ===", flush=True)
+
 
 
 
