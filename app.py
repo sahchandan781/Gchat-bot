@@ -36,7 +36,7 @@ def get_access_token():
 
 
 
-def send_to_gchat_debug(thread_name, ai_text):
+def send_to_gchat(thread_name, ai_text):
     """
     Debug version to isolate the 'str' object has no attribute 'keys' error
     """
