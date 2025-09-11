@@ -27,13 +27,17 @@ def get_access_token():
     if not creds_json:
         raise ValueError("GOOGLE_CREDENTIALS env variable is not set")
 
+    # First parse
     creds_info = json.loads(creds_json)
+
+    # If still a string (double-encoded), parse again
+    if isinstance(creds_info, str):
+        creds_info = json.loads(creds_info)
 
     credentials = sa.Credentials.from_service_account_info(creds_info, scopes=SCOPES)
     auth_req = google.auth.transport.requests.Request()
     credentials.refresh(auth_req)
     return credentials.token
-
 
 
 def send_to_gchat(thread_name, ai_text):
